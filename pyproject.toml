@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "shopbot"
+version = "0.1.0"
+description = ""
+authors = ["dev <dev@aitrix.online>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Django = "^4.1.2"
+Pillow = "^9.2.0"
+djangorestframework = "^3.14.0"
+loguru = "^0.6.0"
+djangorestframework-simplejwt = "^5.2.1"
+drf-yasg = "^1.21.4"
+django-cors-headers = "^3.13.0"
+Markdown = "^3.4.1"
+pyTelegramBotAPI = "^4.7.0"
+Flask = "^2.2.2"
+pytest-django = "^4.5.2"
+django-filter = "^22.1"
+celery = "^5.2.7"
+redis = "^4.3.4"
+beautifulsoup4 = "^4.11.1"
+lorem = "^0.1.1"
+
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

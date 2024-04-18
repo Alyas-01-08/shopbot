@@ -1,0 +1,83 @@
+version: '3.7'
+
+services:
+  redis:
+    restart: always
+    container_name: redis
+    hostname: redis
+    image: redis
+    ports:
+      - "6399:6379"
+    command:
+      - 'redis-server'
+      - '--requirepass Asv_untill'
+      - '--databases 2'
+      - '--save 900 1'
+      - '--save 300 10'
+      - '--save 60 10000'
+    volumes:
+      - data_redis:/data
+      - data_redis_dump:/var/lib/redis/
+  web:
+    restart: always
+    build:
+      context: .
+      dockerfile: django.Dockerfile
+    command: bash -c "python manage.py migrate  && daphne -b 0.0.0.0 -p 8089 shopWebBot.asgi:application"
+    expose:
+      - "8089"
+    environment:
+      - DEBUG=0
+    depends_on:
+      - db
+  worker:
+    restart: always
+    build:
+      context: .
+      dockerfile: django.Dockerfile
+    environment:
+      - DEBUG=0
+    depends_on:
+      - redis
+    command: "celery -A shopWebBot worker -l info"
+  beat:
+    restart: always
+    build:
+      context: .
+      dockerfile: django.Dockerfile
+    environment:
+      - DEBUG=0
+    depends_on:
+      - redis
+    command: "celery -A shopWebBot beat -l info"
+  sqlite3:
+    container_name: sqlite3_container
+    image: nouchka/sqlite3:latest
+    stdin_open: true
+    tty: true
+    volumes:
+      #Modify following line
+      - db.sqlite3:/root/db/
+    ports:
+      - '8000:8000' # expose ports - HOST:CONTAINER
+    restart: unless-stopped
+  
+  # flower:
+  #   container_name: TRWorker
+  #   environment:
+  #     - CELERY_BROKER_URL=redis://default:Asv_untill@37.140.197.135:6399/1
+  #   restart: always
+  #   image: mher/flower
+  #   ports:
+  #     - "5555:5555"
+  #   logging:
+  #     driver: json-file
+  #     options:
+  #       max-size: "1000k"
+  #       max-file: "4"
+  
+
+volumes:
+  data_redis:
+  data_redis_dump:
+  letsencrypt:
